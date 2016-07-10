@@ -22,25 +22,6 @@ from openpyxl import load_workbook
 """
 from Bio import SearchIO
 
-def write_accession_eval_to_ws(best_hit_evalue, ws_row):
-    """Writes out Accession of Query Result Hit and its lowest HSP evalue to
-        the ws.
-    """
-
-def find_best_hit_and_eval(qr, ws_row):
-    """This method takes an xml query result and searches and returns in a list
-        the best hit accession string and the lowest evalue
-    """
-    #print("QR ID = " + str(qr.id))
-    
-    best_accession = qr.hits[0].accession
-    best_evalue = qr.hits[0].hsps[0].evalue
-    for hit in qr.hits:
-        for hsp in hit.hsps:
-            #print(str(hsp.evalue))
-            if hsp.evalue == best_evalue:
-                print('Record = ' + str(ws_row) + 'INSIDE ELIF hsp.evalue is ' + (str(hsp.evalue)))
-    return
 #MAIN STARTS
 wb_queries = load_workbook('C_Blastn_viral_queries_against_Lh_TSA.xlsx', 
                            read_only= False)
@@ -55,14 +36,25 @@ for query_result in qGenerator:
         #print('Processing Query BLAST return ' + str(ws_row-2))
         number_hits = int(len(query_result.hits))
         # write number of hits to 3 column and appropriate row.
-        num_hits_cell = ws.cell(row = ws_row, column = 3)
-        num_hits_cell.value = number_hits
+        curr_cell = ws.cell(row = ws_row, column = ws_col)
+        curr_cell.value = number_hits
         if number_hits == 0:
+            ws_row += 1
+            ws_col = 3
             continue
-        best_hit_evalue = find_best_hit_and_eval(query_result,ws_row -2 )
+        ws_col += 1
+        curr_cell = ws.cell(row = ws_row, column = ws_col)
+        best_acc = query_result.hits[0].accession
+        curr_cell.value = best_acc
+        ws_col += 1
+        curr_cell = ws.cell(row = ws_row, column = ws_col)
+        best_eval = query_result.hits[0].hsps[0].evalue
+        curr_cell.value = best_eval
         ws_row += 1
-        if ws_row == 50:
+        ws_col = 3
+        if ws_row == 4292:
             break
+outfile = 'best_hits_blastn_of_blastx_viral_queries_against_Lh_TSA.xml'
+wb_queries.save(outfile)
 print('program done')
-wb_queries.save('New.xlsx')
 
