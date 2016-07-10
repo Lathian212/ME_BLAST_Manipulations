@@ -15,6 +15,54 @@ This is the module for adding the best hit to the Excel spreadsheet.
 """ To work with Excel .xlsx files I am using openpyxl """
 from openpyxl import Workbook
 from openpyxl import load_workbook
+""" Bio.SearchIO is still experimental at this point will throw warning flag,
+    which only means the authors consider it changeable but the virtual
+    evironment will protect against any changes assuming nobody upgrades
+    the bioPython in virtualPython3.5
+"""
+from Bio import SearchIO
 
-wb_queries = load_workbook('Blastn_viralqueries_against_Lh_TSA.xlsx', 
-                           read_only = True, use_iterators = True)
+def write_accession_eval_to_ws(best_hit_evalue, ws_row):
+    """Writes out Accession of Query Result Hit and its lowest HSP evalue to
+        the ws.
+    """
+
+def find_best_hit_and_eval(qr, ws_row):
+    """This method takes an xml query result and searches and returns in a list
+        the best hit accession string and the lowest evalue
+    """
+    #print("QR ID = " + str(qr.id))
+    
+    best_accession = qr.hits[0].accession
+    best_evalue = qr.hits[0].hsps[0].evalue
+    for hit in qr.hits:
+        for hsp in hit.hsps:
+            #print(str(hsp.evalue))
+            if hsp.evalue == best_evalue:
+                print('Record = ' + str(ws_row) + 'INSIDE ELIF hsp.evalue is ' + (str(hsp.evalue)))
+    return
+#MAIN STARTS
+wb_queries = load_workbook('C_Blastn_viral_queries_against_Lh_TSA.xlsx', 
+                           read_only= False)
+ws = wb_queries.active
+"""Note starting row and col will change if more data added to ws"""
+ws_row = 3
+"""will vary between 3 and 5 in range"""
+ws_col = 3
+blastn = 'Results_blastn_of_blastx_viral_Queries_against_Lh_TSA.xml'
+qGenerator = SearchIO.parse(blastn, 'blast-xml')
+for query_result in qGenerator:
+        #print('Processing Query BLAST return ' + str(ws_row-2))
+        number_hits = int(len(query_result.hits))
+        # write number of hits to 3 column and appropriate row.
+        num_hits_cell = ws.cell(row = ws_row, column = 3)
+        num_hits_cell.value = number_hits
+        if number_hits == 0:
+            continue
+        best_hit_evalue = find_best_hit_and_eval(query_result,ws_row -2 )
+        ws_row += 1
+        if ws_row == 50:
+            break
+print('program done')
+wb_queries.save('New.xlsx')
+
