@@ -15,3 +15,6 @@ This is the module for adding the best hit to the Excel spreadsheet.
 """ To work with Excel .xlsx files I am using openpyxl """
 from openpyxl import Workbook
 from openpyxl import load_workbook
+
+wb_queries = load_workbook('Blastn_viralqueries_against_Lh_TSA.xlsx', 
+                           read_only = True, use_iterators = True)
