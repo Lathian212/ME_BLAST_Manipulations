@@ -54,7 +54,7 @@ for query_result in qGenerator:
         ws_col = 3
         if ws_row == 4292:
             break
-outfile = 'best_hits_blastn_of_blastx_viral_queries_against_Lh_TSA.xml'
+outfile = 'best_hits_Blastn_viral_queries_against_Lh_TSA.xlsx'
 wb_queries.save(outfile)
 print('program done')
 
