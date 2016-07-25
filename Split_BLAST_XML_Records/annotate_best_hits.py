@@ -47,5 +47,5 @@ for i in range (3, 4292):
                     report_val = ws_report.cell(row = j, column = k).value
                     query_cell = ws_merge.cell(row = i, column = k +5)
                     query_cell.value = report_val
-wb_merge.save('merged')
+wb_merge.save('Blastn_against_Lh_TSA_merged_Lipkin_Viral_Report.xlsx')
 print('Program done.')
